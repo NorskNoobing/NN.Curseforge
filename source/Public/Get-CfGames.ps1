@@ -1,8 +1,8 @@
 function Get-CfGames {
     [CmdletBinding()]
     param (
-        [Parameter(Mandatory,ParameterSetName="List games")][int]$index,
-        [Parameter(Mandatory,ParameterSetName="List games")][int]$pageSize,
+        [Parameter(ParameterSetName="List games")][int]$index,
+        [Parameter(ParameterSetName="List games")][int]$pageSize,
         [Parameter(Mandatory,ParameterSetName="Get game by id")][int]$gameId
     )
 
@@ -35,6 +35,7 @@ function Get-CfGames {
                 "x-api-key" = Get-CfAccessToken
             }
         }
-        Invoke-RestMethod @splat
+        $result = Invoke-RestMethod @splat
+        $result.data
     }
 }
