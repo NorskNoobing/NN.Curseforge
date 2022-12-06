@@ -11,6 +11,7 @@ function Get-CfGameVersions {
                 "x-api-key" = Get-CfAccessToken
             }
         }
-        Invoke-RestMethod @splat
+        $result = Invoke-RestMethod @splat
+        $result.data
     }
 }
