@@ -16,7 +16,7 @@ function Get-CfMods {
         [Parameter(ParameterSetName="Search mods")][int]$index,
         [Parameter(ParameterSetName="Search mods")][int]$pageSize,
         [Parameter(Mandatory,ParameterSetName="Get mod by id")]$modId,
-        [Parameter(Mandatory,ParameterSetName="Get a list of mods")][hashtable]$modList
+        [Parameter(Mandatory,ParameterSetName="Get a list of mods")][array]$modIds
     )
 
     process {
@@ -43,7 +43,9 @@ function Get-CfMods {
             }
             "Get a list of mods" {
                 $splat = @{
-                    "Body" = $modList
+                    "Body" = @{
+                        "modIds" = $modIds
+                    } | ConvertTo-Json
                 }
             }
         }
@@ -54,6 +56,7 @@ function Get-CfMods {
                 "x-api-key" = Get-CfAccessToken
             }
         }
-        Invoke-RestMethod @splat
+        $result = Invoke-RestMethod @splat
+        $result.data
     }
 }
