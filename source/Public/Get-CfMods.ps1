@@ -60,3 +60,4 @@ function Get-CfMods {
         $result.data
     }
 }
+#Bug: 403 Bad request when using "Get a list of mods"
