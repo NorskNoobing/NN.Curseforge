@@ -16,8 +16,9 @@ function Get-CfFeaturedMods {
                 "gameId" = $gameId
                 "excludedModIds" = $excludedModIds
                 "gameVersionTypeId" = $gameVersionTypeId
-            }
+            } | ConvertTo-Json
         }
         Invoke-RestMethod @splat
     }
 }
+#bug: 403 Bad request
