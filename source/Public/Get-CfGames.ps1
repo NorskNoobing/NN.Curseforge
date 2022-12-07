@@ -30,6 +30,7 @@ function Get-CfGames {
         }
 
         $splat = @{
+            "Method" = "GET"
             "Uri" = $uri
             "Headers" = @{
                 "x-api-key" = Get-CfAccessToken

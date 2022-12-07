@@ -6,6 +6,7 @@ function Get-CfModDescription {
 
     process {
         $splat = @{
+            "Method" = "GET"
             "Uri" = "https://api.curseforge.com/v1/mods/$modId/description"
             "Headers" = @{
                 "x-api-key" = Get-CfAccessToken
