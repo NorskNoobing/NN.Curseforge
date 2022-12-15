@@ -8,9 +8,7 @@ function Get-CfMods {
         [Parameter(ParameterSetName="Search mods")]$searchFilter,
         [Parameter(ParameterSetName="Search mods")]$sortField,
         [Parameter(ParameterSetName="Search mods")][ValidateSet("asc","desc")]$sortOrder,
-        [Parameter(ParameterSetName="Search mods")][ValidateScript({
-            #todo: get all modloader types
-        })][string]$modLoaderType,
+        [Parameter(ParameterSetName="Search mods")][int]$modLoaderType,
         [Parameter(ParameterSetName="Search mods")][int]$gameVersionTypeId,
         [Parameter(ParameterSetName="Search mods")][string]$slug,
         [Parameter(ParameterSetName="Search mods")][int]$index,
@@ -24,25 +22,31 @@ function Get-CfMods {
 
         switch ($PsCmdlet.ParameterSetName) {
             "Search mods" {
+                $Method = "GET"
                 $uri = "$uri/search"
+                #Build request Uri
                 $PSBoundParameters.Keys.ForEach({
-                    $key = $_
-                    $value = $PSBoundParameters.$key
-    
-                    if (([array]$PSBoundParameters.Keys)[0] -eq $key) {
-                        $delimiter = "?"
-                    } else {
-                        $delimiter = "&"
+                    $Key = $_
+                    $Value = $PSBoundParameters.$key
+
+                    #Check for "?" in Uri and set delimiter
+                    if (!($Uri -replace "[^?]+")) {
+                        $Delimiter = "?"
                     }
-    
-                    $uri = "$uri$delimiter$key=$value"
+                    else {
+                        $Delimiter = "&"
+                    }
+
+                    $Uri = "$Uri$Delimiter$Key=$Value"
                 })
             }
             "Get mod by id" {
+                $Method = "GET"
                 $uri = "$uri/$modId"
             }
             "Get a list of mods" {
-                $splat = @{
+                $Method = "POST"
+                $BodySplat = @{
                     "Body" = @{
                         "modIds" = $modIds
                     } | ConvertTo-Json
@@ -50,14 +54,15 @@ function Get-CfMods {
             }
         }
 
-        $splat = $splat + @{
+        $splat = $BodySplat + @{
+            "Method" = $Method
             "Uri" = $uri
             "Headers" = @{
                 "x-api-key" = Get-CfAccessToken
+                "Content-Type" = "application/json"
             }
         }
         $result = Invoke-RestMethod @splat
         $result.data
     }
 }
-#Bug: 403 Bad request when using "Get a list of mods"
